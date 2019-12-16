@@ -10,8 +10,10 @@ class QrcodegeneratorConan(ConanFile):
     description = "<Description of Qrcodegenerator here>"
     topics = ("<Put some tag here>", "<here>", "<and here>")
     settings = "os", "compiler", "build_type", "arch"
-    options = {"shared": [False]}
-    default_options = {"shared": False}
+    options = {"shared": [False],
+               'verbose': [False, True]}
+    default_options = {"shared": False,
+                       'verbose': False}
     generators = "cmake"
     exports_sources = 'CMakeLists.txt'
 
@@ -26,7 +28,11 @@ class QrcodegeneratorConan(ConanFile):
         os.rename(archive_name, self._source_subfolder)
 
     def _configure_cmake(self):
-        cmake = CMake(self)
+        cmake = CMake(self,
+                      # You can specify the following verbosity levels: q[uiet], m[inimal], n[ormal], d[etailed], and diag[nostic].
+                      msbuild_verbosity="normal" if self.options.verbose else "minimal")
+
+        cmake.definitions['CMAKE_VERBOSE_MAKEFILE'] = str(self.options.verbose).upper()
         cmake.configure()
         return cmake
 
@@ -41,6 +47,10 @@ class QrcodegeneratorConan(ConanFile):
 
     def package_info(self):
         self.cpp_info.libs = tools.collect_libs(self)
+
+    def package_id(self):
+        # Verbosity doesn't affect the package ID
+        del self.info.options.verbose
 
     def configure(self):
         del self.settings.compiler.libcxx
