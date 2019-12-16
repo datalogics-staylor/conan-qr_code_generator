@@ -22,4 +22,7 @@ class QrcodegeneratorTestConan(ConanFile):
     def test(self):
         if not tools.cross_building(self.settings):
             os.chdir("bin")
-            self.run(".%sexample" % os.sep)
+            self.run(".%stest_qr_code_generator_package" % os.sep)
+
+    def configure(self):
+        del self.settings.compiler.libcxx
