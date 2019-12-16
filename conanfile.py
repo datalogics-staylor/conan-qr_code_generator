@@ -10,9 +10,14 @@ class QrcodegeneratorConan(ConanFile):
     description = "<Description of Qrcodegenerator here>"
     topics = ("<Put some tag here>", "<here>", "<and here>")
     settings = "os", "compiler", "build_type", "arch"
-    options = {"shared": [True, False]}
+    options = {"shared": [False]}
     default_options = {"shared": False}
     generators = "cmake"
+    exports_sources = 'CMakeLists.txt'
+
+    @property
+    def _source_subfolder(self):
+        return "source_subfolder"
 
     def source(self):
         tools.get(**self.conan_data["sources"][self.version])
@@ -20,16 +25,14 @@ class QrcodegeneratorConan(ConanFile):
         archive_name = os.path.basename(os.path.dirname(os.path.dirname(url))) + '-' + self.version
         os.rename(archive_name, self._source_subfolder)
 
+    def _configure_cmake(self):
+        cmake = CMake(self)
+        cmake.configure()
+        return cmake
 
     def build(self):
-        cmake = CMake(self)
-        cmake.configure(source_folder="hello")
+        cmake = self._configure_cmake()
         cmake.build()
-
-        # Explicit way:
-        # self.run('cmake %s/hello %s'
-        #          % (self.source_folder, cmake.command_line))
-        # self.run("cmake --build . %s" % cmake.build_config)
 
     def package(self):
         self.copy("*.h", dst="include", src="hello")
