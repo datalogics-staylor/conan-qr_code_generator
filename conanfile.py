@@ -4,11 +4,9 @@ from conans import ConanFile, CMake, tools
 
 class QrcodegeneratorConan(ConanFile):
     name = "qr_code_generator"
-    license = "<Put the package license here>"
-    author = "<Put your name here> <And your email here>"
-    url = "<Package recipe repository url here, for issues about the package>"
-    description = "<Description of Qrcodegenerator here>"
-    topics = ("<Put some tag here>", "<here>", "<and here>")
+    license = "MIT"
+    url = "https://github.com/nayuki/QR-Code-generator"
+    description = "This project aims to provide the best and clearest QR Code generator library."
     settings = "os", "compiler", "build_type", "arch"
     options = {"shared": [False],
                'verbose': [False, True]}
