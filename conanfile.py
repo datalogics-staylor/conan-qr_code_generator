@@ -33,6 +33,7 @@ class QrcodegeneratorConan(ConanFile):
     def build(self):
         cmake = self._configure_cmake()
         cmake.build()
+        cmake.test()
 
     def package(self):
         cmake = self._configure_cmake()

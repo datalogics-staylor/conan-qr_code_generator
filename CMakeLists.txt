@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.15 FATAL_ERROR)
 project(qr_code_generator C)
+enable_testing()
 
 if(EXISTS ${CMAKE_CURRENT_BINARY_DIR}/conanbuildinfo_multi.cmake)
   include(${CMAKE_CURRENT_BINARY_DIR}/conanbuildinfo_multi.cmake)
@@ -29,6 +30,16 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(QR_CODE_C_FOLDER ${CMAKE_CURRENT_SOURCE_DIR}/source_subfolder/c)
 add_library(qr_code_generator ${QR_CODE_C_FOLDER}/qrcodegen.c)
 target_include_directories(qr_code_generator PRIVATE ${QR_CODE_C_FOLDER})
+
+# It comes with a test, so let's test it!
+# Needs the qrcodegen.c file compiled with QRCODEGEN_TEST
+add_executable(qrcodegen-test
+  ${QR_CODE_C_FOLDER}/qrcodegen-test.c
+  ${QR_CODE_C_FOLDER}/qrcodegen.c)
+target_include_directories(qrcodegen-test PRIVATE ${QR_CODE_C_FOLDER})
+target_compile_definitions(qrcodegen-test PRIVATE QRCODEGEN_TEST)
+target_link_libraries(qrcodegen-test PRIVATE qr_code_generator)
+add_test(NAME qrcodegen-test COMMAND qrcodegen-test)
 
 install(TARGETS qr_code_generator
   RUNTIME DESTINATION bin
