@@ -28,8 +28,12 @@ set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 set(QR_CODE_C_FOLDER ${CMAKE_CURRENT_SOURCE_DIR}/source_subfolder/c)
-add_library(qr_code_generator ${QR_CODE_C_FOLDER}/qrcodegen.c)
-target_include_directories(qr_code_generator PRIVATE ${QR_CODE_C_FOLDER})
+add_library(qr_code_generator_c ${QR_CODE_C_FOLDER}/qrcodegen.c)
+target_include_directories(qr_code_generator_c PRIVATE ${QR_CODE_C_FOLDER})
+
+set(QR_CODE_CPP_FOLDER ${CMAKE_CURRENT_SOURCE_DIR}/source_subfolder/cpp)
+add_library(qr_code_generator_cpp ${QR_CODE_CPP_FOLDER}/QrCode.cpp)
+target_include_directories(qr_code_generator_cpp PRIVATE ${QR_CODE_CPP_FOLDER})
 
 # It comes with a test, so let's test it!
 # Needs the qrcodegen.c file compiled with QRCODEGEN_TEST
@@ -41,9 +45,16 @@ target_compile_definitions(qrcodegen-test PRIVATE QRCODEGEN_TEST)
 target_link_libraries(qrcodegen-test PRIVATE qr_code_generator)
 add_test(NAME qrcodegen-test COMMAND qrcodegen-test)
 
-install(TARGETS qr_code_generator
+install(TARGETS qr_code_generator_c
+  RUNTIME DESTINATION bin
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib)
+
+install(TARGETS qr_code_generator_cpp
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib)
 
 install(FILES ${QR_CODE_C_FOLDER}/qrcodegen.h DESTINATION include)
+install(FILES ${QR_CODE_CPP_FOLDER}/QrCode.hpp DESTINATION include)
+
